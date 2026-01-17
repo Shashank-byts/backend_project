@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 const userSchema=new Schema(
 {
-    username:{
+    userName:{
         type:String,
         required:true,
         unique:true,
@@ -36,7 +36,7 @@ const userSchema=new Schema(
     },
     watchHistory:
     [   {
-            type:Schema.type.objectId,
+            type:Schema.Types.ObjectId,
             ref:"Video",
 
         }
