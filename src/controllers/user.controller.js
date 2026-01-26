@@ -19,10 +19,10 @@ const generateTokens = async (userId) => {
         await user.save({ validateBeforeSave: false });
         return { accessToken, refreshToken };
     } catch (error) {
+        console.error("TOKEN ERROR:", error);
         throw new ApiError(500, "something went wrong while generating tokens")
     }
 }
-
 const registerUser = asyncHandler(async (req, res) => {
     // get user detiles from frontend
     // validation- not empty
@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { username, email, password } = req.body;
     console.log("email:", email);
-    if (!username || !email) {
+    if (!email) {
         throw new ApiError(400, "username or email is required")
     }
     if (!password) {
@@ -119,8 +119,11 @@ const loginUser = asyncHandler(async (req, res) => {
     // there is a difference between User and user
     // User is the model
     // user is the document
-    // nowwe are checking if the password is correct or not
-    const isPasswordValid = await user.isPasswordValid(password);
+    // now we are checking if the password is correct or not
+
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    // console.log("LOGIN DEBUG: Password Valid?", isPasswordValid);
     if (!isPasswordValid) {
         throw new ApiError(401, "invalid credentials");
     }
@@ -148,7 +151,6 @@ const loginUser = asyncHandler(async (req, res) => {
         )
 
 })
-
 const logoutUser = asyncHandler(async (req, res) => {
     // get refresh token from cookie
     // check for user exist

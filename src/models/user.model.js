@@ -45,20 +45,26 @@ const userSchema = new Schema(
             type: String,
             required: [true, 'password is required']
         },
-        refreshTokens: {
-            type: String
-        }
+        refreshTokens: [
+            {
+                type: String
+            }
+        ]
 
     }, { timestamps: true })
 
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
 
+    console.log("🔒 Hashing password for user:", this.username);
     this.password = await bcrypt.hash(this.password, 10);
 });
 
 
 userSchema.methods.isPasswordCorrect = async function (password) {
+    console.log("🔑 Checking password for:", this.username);
+    // console.log("Input:", password); // Security risk: don't log plain passwords in prod
+    // console.log("Stored:", this.password);
     return await bcrypt.compare(password, this.password)
 };
 
